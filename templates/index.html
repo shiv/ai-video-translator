@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Translation Service</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-video"></i> AI Video Translation Service</h1>
+                <p class="subtitle">Translate your videos to any language with AI-powered technology</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section" id="uploadSection">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cloud-upload-alt"></i> Upload Video</h2>
+                        <p>Select an MP4 video file (max 200MB) to translate</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <!-- File Upload -->
+                            <div class="upload-area" id="uploadArea">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div class="upload-text">
+                                    <h3>Drop your video here or click to browse</h3>
+                                    <p>Supports: MP4 files up to 200MB</p>
+                                </div>
+                                <input type="file" id="videoFile" name="file" accept=".mp4" hidden>
+                            </div>
+
+                            <!-- File Info -->
+                            <div class="file-info" id="fileInfo" style="display: none;">
+                                <div class="file-details">
+                                    <i class="fas fa-file-video"></i>
+                                    <div>
+                                        <div class="file-name" id="fileName"></div>
+                                        <div class="file-size" id="fileSize"></div>
+                                    </div>
+                                    <button type="button" class="btn-remove" id="removeFile">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Translation Settings -->
+                            <div class="settings-grid">
+                                <div class="form-group">
+                                    <label for="sourceLanguage">Source Language</label>
+                                    <select id="sourceLanguage" name="source_language">
+                                        <option value="eng">English</option>
+                                        <option value="spa">Spanish</option>
+                                        <option value="fra">French</option>
+                                        <option value="deu">German</option>
+                                        <option value="ita">Italian</option>
+                                        <option value="por">Portuguese</option>
+                                        <option value="jpn">Japanese</option>
+                                        <option value="kor">Korean</option>
+                                        <option value="cmn">Chinese (Mandarin)</option>
+                                        <option value="hin">Hindi</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="targetLanguage">Target Language *</label>
+                                    <select id="targetLanguage" name="target_language" required>
+                                        <option value="">Select target language</option>
+                                        <option value="eng">English</option>
+                                        <option value="spa">Spanish</option>
+                                        <option value="fra">French</option>
+                                        <option value="deu">German</option>
+                                        <option value="ita">Italian</option>
+                                        <option value="por">Portuguese</option>
+                                        <option value="jpn">Japanese</option>
+                                        <option value="kor">Korean</option>
+                                        <option value="cmn">Chinese (Mandarin)</option>
+                                        <option value="hin">Hindi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Settings (Collapsible) -->
+                            <div class="advanced-settings">
+                                <button type="button" class="advanced-toggle" id="advancedToggle">
+                                    <i class="fas fa-cog"></i> Advanced Settings
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="advanced-content" id="advancedContent">
+                                    <div class="settings-grid">
+                                        <div class="form-group">
+                                            <label for="sttModel">Speech Recognition Model</label>
+                                            <select id="sttModel" name="stt_model">
+                                                <option value="tiny">Tiny</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="translationModel">Translation Model</label>
+                                            <select id="translationModel" name="translation_model">
+                                                <option value="nllb-200-distilled-600M">NLLB 600M (Faster)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn-primary" id="uploadBtn" disabled>
+                                <i class="fas fa-upload"></i>
+                                Start Translation
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Job Status Section -->
+            <section class="status-section" id="statusSection">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-search"></i> Check Job Status</h2>
+                        <p>Enter a job ID to check translation progress</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="job-search">
+                            <div class="input-group">
+                                <input type="text" id="jobIdInput" placeholder="Enter Job ID (e.g., abc123-def456-...)">
+                                <button type="button" class="btn-secondary" id="checkStatusBtn">
+                                    <i class="fas fa-search"></i>
+                                    Check Status
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Job Progress Section -->
+            <section class="progress-section" id="progressSection" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-tasks"></i> Translation Progress</h2>
+                        <div class="job-info">
+                            <div class="job-id-display">
+                                <span>Job ID: </span>
+                                <span id="currentJobId" class="job-id-text"></span>
+                                <button type="button" class="btn-copy" id="copyJobId" title="Copy Job ID">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Progress Bar -->
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span id="progressPercent">0%</span>
+                                <span id="progressStatus">Initializing...</span>
+                            </div>
+                        </div>
+
+                        <!-- Job Details -->
+                        <div class="job-details">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <label>File:</label>
+                                    <span id="jobFileName">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Source:</label>
+                                    <span id="jobSourceLang">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Target:</label>
+                                    <span id="jobTargetLang">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Status:</label>
+                                    <span id="jobStatus" class="status-badge">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Started:</label>
+                                    <span id="jobCreated">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Duration:</label>
+                                    <span id="jobDuration">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div class="error-message" id="errorMessage" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>
+                                <h4>Translation Failed</h4>
+                                <p id="errorText"></p>
+                            </div>
+                        </div>
+
+                        <!-- Success Actions -->
+                        <div class="success-actions" id="successActions" style="display: none;">
+                            <div class="action-buttons">
+                                <button type="button" class="btn-primary" id="previewBtn">
+                                    <i class="fas fa-eye"></i>
+                                    Preview Result
+                                </button>
+                                <button type="button" class="btn-success" id="downloadBtn">
+                                    <i class="fas fa-download"></i>
+                                    Download Video
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button type="button" class="btn-secondary" id="newTranslationBtn">
+                                <i class="fas fa-plus"></i>
+                                New Translation
+                            </button>
+                            <button type="button" class="btn-danger" id="cancelJobBtn" style="display: none;">
+                                <i class="fas fa-stop"></i>
+                                Cancel Job
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-play"></i> Video Preview</h2>
+                        <p>Preview your translated video</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="video-preview">
+                            <div class="video-container" id="videoContainer">
+                                <!-- Video will be loaded here -->
+                            </div>
+                            <div class="preview-info" id="previewInfo">
+                                <!-- Preview details will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 AI Video Translation Service</p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html> 

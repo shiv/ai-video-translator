@@ -1,0 +1,83 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.venv
+.env
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+.tox
+.nox
+
+# Documentation
+*.md
+docs/
+*.txt
+!requirements.txt
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache
+.mypy_cache
+
+# Local development
+.env.local
+.env.development
+.env.test
+
+# Output files (these should be mounted volumes)
+output/
+uploads/
+*.mp4
+*.wav
+*.mp3
+
+# AWS and deployment files (keep for build context)
+# docker-compose.yml
+# Dockerfile
+
+# Setup files (not needed in container)
+setup.py
+setup.cfg
+
+# Test files
+test_*.py
+*_test.py
+tests/ 

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  ai-video-translation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: application
+    container_name: ai-video-translation
+    ports:
+      - "8000:8000"
+    environment:
+      - HUGGING_FACE_TOKEN=${HUGGING_FACE_TOKEN}
+      - HOST=0.0.0.0
+      - PORT=8000
+      - OUTPUT_DIRECTORY=/app/output
+      - UPLOAD_DIRECTORY=/app/uploads
+      - LOG_LEVEL=INFO
+    volumes:
+      # Persistent storage for uploads and outputs
+      - ./uploads:/app/uploads
+      - ./output:/app/output
+      - ./logs:/app/logs
+      # Optional: Mount model cache to persist between runs
+      - model_cache:/root/.cache
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+
+volumes:
+  model_cache:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    name: ai-video-translation-network 
